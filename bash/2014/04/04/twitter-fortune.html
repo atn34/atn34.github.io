@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>twitter fortune</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Stuff Andrew Likes</a></h1>
+            <a class="extra" href="/">home</a>
+            <a class="extra" href="/categories.html">categories</a>
+            <a class="extra" href="/tags.html">tags</a>
+            <a class="extra" href="/archive.html">archive</a>
+          </div>
+
+          <h1>twitter fortune</h1>
+<p class="meta">04 Apr 2014</p>
+
+<div class="post">
+<h1 id="motivation">Motivation</h1>
+<p>Recently, my friend <a href="https://twitter.com/BkcMath">Ben Carriel</a> decided he wanted a random <a href="https://twitter.com/LILBTHEBASEDGOD">lil b</a> tweet to appear in his emacs start buffer. I liked the idea. I set out to make it happen for my vim start screen.</p>
+<h1 id="fortune">Fortune</h1>
+<p>Linux comes with the <a href="http://linux.die.net/man/6/fortune"><code>fortune</code></a> utility, which serves a similar purpose: when run with no arguments it prints a “random, hopefully interesting, adage”. For example,</p>
+<pre><code>$ fortune
+You are only young once, but you can stay immature indefinitely.</code></pre>
+<p>Fortune reads these adages from fortune files. I thought it’d be nice to have a script that can generate fortune files from a twitter user’s tweets.</p>
+<h1 id="twitter">Twitter</h1>
+<p>I found a nice tool made by Kai Hendry called <a href="http://greptweet.com/">greptweet</a> that can request up to 3000 tweets, with a nice webapi.</p>
+<p>To use it, first fetch the tweets</p>
+<pre><code>$ curl -s http://greptweet.com/f/&lt;username&gt; &gt; /dev/null</code></pre>
+<p>When that’s done, you can download the tweets like so</p>
+<pre><code>$ curl -s http://greptweet.com/u/lilbthebasedgod/tweets.txt | head -1
+451980332581928960|Fri Apr 04 07:11:23 +0000 2014|Smile for me, I love you - Lil B</code></pre>
+<p>To use the tweets with fortune, we need to format the tweets the way <code>fortune</code> wants:</p>
+<div class="highlight"><pre><code class="bash">curl -s http://greptweet.com/u/<span class="nv">$TWITTER_HANDLE</span>/tweets.txt <span class="se">\</span>
+    <span class="p">|</span> cut -f3 -d<span class="s1">&#39;|&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> grep -v <span class="s1">&#39;\&lt;RT\&gt;\|\&lt;http\|@&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> awk <span class="s2">&quot;1; { print \&quot;\t\t-- @$TWITTER_HANDLE\n%\&quot;; }&quot;</span>
+</code></pre></div>
+
+
+<p><code>cut -f3 -d'|'</code> to keep field 3 where fields are delimited by ‘|’, <code>grep -v '\&lt;RT\&gt;\|\&lt;http\|@'</code> to filter out the retweets, tweets with links, and tweets with <code>@</code> mentions, and <code>awk &quot;1; { print \&quot;\t\t-- @$TWITTER_HANDLE\n%\&quot;; }&quot;</code> to format the tweets. I got the awk one-liner <a href="http://www.theunixschool.com/2012/08/insert-new-line-after-every-n-lines.html">here</a>. Basically <code>1</code> (true) prints every line by default, then we print who the tweet is by, and <code>%</code> on its own line to delimit the strings for <code>fortune</code>.</p>
+<p>Full script available <a href="https://github.com/atn34/twitter-fortune">here</a>. There were some stray html entities in the tweets (eg <code>&amp;amp;</code> or <code>&amp;lt;</code> or <code>&amp;gt;</code>), so I threw some <code>sed</code> in the pipeline to clean those up.</p>
+<p>One more complication: before <code>fortune</code> can use the file, we need to use <a href="http://linux.die.net/man/1/strfile"><code>strfile</code></a> to allow for random access of strings in the file.</p>
+<pre><code>$ ./twitter-fortune.sh lilbthebasedgod &gt; fortune-file
+$ strfile fortune-file
+$ fortune fortune-file
+Love you and i love life !!!!! Thank you for waking up today - Lil B
+                -- @lilbthebasedgod</code></pre>
+<p>Then you’ll probably want to add your new fortune file to the rest of them. Use <code>$ fortune -f</code> to see where the rest of your fortune files are.</p>
+<h1 id="vim">Vim</h1>
+<p>I used Marco Hinz’s <a href="https://github.com/mhinz/vim-startify">vim startify</a> for my custom vim start screen.</p>
+<p>Once installed, I added the following bit of configuration to use <code>fortune</code> as my custom header</p>
+<pre><code>let g:startify_custom_header =
+    \ map(split(system(&#39;fortune&#39;), &#39;\n&#39;), &#39;&quot;   &quot;. v:val&#39;) + [&#39;&#39;,&#39;&#39;]</code></pre>
+<h1 id="final-result">Final Result</h1>
+<figure>
+<embed src="http://i.imgur.com/MKYrQeO.png?1?8351" /><figcaption>Final result</figcaption>
+</figure>
+
+</div>
+
+<div class="footer">
+
+<h2>Categories</h2>
+<ul>
+    
+    
+
+
+
+    <li><a href="/categories.html#bash-ref">
+        bash
+    </a></li>
+
+
+
+
+</ul>
+
+
+
+<h2>Tags</h2>
+<ul>
+    
+    
+
+
+ 
+    <li><a href="/tags.html#bash-ref">bash</a></li>
+ 
+    <li><a href="/tags.html#twitter-ref">twitter</a></li>
+ 
+    <li><a href="/tags.html#lilb-ref">lilb</a></li>
+
+
+
+
+</ul>
+
+</div>
+
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Andrew Noyes<br />
+                Software Engineer<br />
+                anoyes34@gmail.com
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+              <a href="https://github.com/atn34">github.com/atn34</a><br />
+                <a href="https://twitter.com/atn34">twitter.com/atn34</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>

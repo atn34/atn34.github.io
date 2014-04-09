@@ -1,0 +1,13 @@
+
+www.atn34.com/categories.html
+www.atn34.com/tags.html
+www.atn34.com/archive.html
+www.atn34.com/index.html
+www.atn34.com/sitemap.txt
+
+www.atn34.com/git/2014/04/08/git-hooks-and-haskell-tags.html
+www.atn34.com/bash/2014/04/05/cmus-album-art.html
+www.atn34.com/bash/2014/04/04/twitter-fortune.html
+www.atn34.com/jekyll/2014/04/03/setting-up-jekyll.html
+www.atn34.com/bash/2014/04/03/new-post-script.html
+www.atn34.com/jekyll/update/2014/04/03/welcome-to-jekyll.html

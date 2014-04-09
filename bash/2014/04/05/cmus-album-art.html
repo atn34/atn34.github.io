@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>cmus album art</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Stuff Andrew Likes</a></h1>
+            <a class="extra" href="/">home</a>
+            <a class="extra" href="/categories.html">categories</a>
+            <a class="extra" href="/tags.html">tags</a>
+            <a class="extra" href="/archive.html">archive</a>
+          </div>
+
+          <h1>cmus album art</h1>
+<p class="meta">05 Apr 2014</p>
+
+<div class="post">
+<h1 id="cmus">cmus</h1>
+<p>I’ve been using <a href="https://cmus.github.io/">cmus</a> as my music player for a while now. It’s small, fast, and simple with vim-like keybindings, and you can configure it to run an external script to display status changes. I wrote a script to change my desktop background to the album art of whatever song is currently playing.</p>
+<h1 id="beets">beets</h1>
+<p>This only works with a well organized music library with art for every album. I use <a href="http://beets.radbox.org/">beets</a>. Beets organizes a music library so that every album’s directory follows this format: <code>/path/to/music/albumartist/album/</code>. With the help of some plugins, it can also fetch album art, embed it in <code>.mp3</code>’s, and save it as <code>cover.jpg</code> in the album’s directory. I’ve <a href="http://beets.readthedocs.org/en/v1.3.3/reference/config.html">configured</a> beets to resize album art to a max width of 500 for consistency. Most album art seems to be 500x500 anyway.</p>
+<p>Here is my <code>config.yaml</code></p>
+<pre><code>directory: /home/andrew/music
+library: /home/andrew/music/library.blb
+plugins: fetchart missing embedart
+fetchart:
+    maxwidth: 500</code></pre>
+<h1 id="cmus-notify-script">cmus notify script</h1>
+<p>cmus calls your status display script with a series of key-value pairs as arguments. I started with <a href="https://github.com/nblock/cmus-notify/blob/master/cmus-notify">this script</a>, and added some functionality to set the background.</p>
+<p>We need the filepath of the album art. For that we need the album artist and album title. The album title is easy: it’s passed in as one of the key value pairs. The album artist is not. We can, however, get it using <code>cmus-remote</code>.</p>
+<div class="highlight"><pre><code class="bash"><span class="nv">ALBUMARTIST</span><span class="o">=</span><span class="k">$(</span>cmus-remote -Q <span class="p">|</span> grep -w albumartist <span class="p">|</span> cut -d<span class="s2">&quot; &quot;</span> -f 3- <span class="p">|</span> sanitize_path<span class="k">)</span>
+</code></pre></div>
+
+
+<p><code>cmus-remote -Q</code> to <a href="http://linux.die.net/man/1/cmus-remote">“Get player status information”</a>, <code>grep -w albumartist</code> picks out the line with the album artist, and <code>cut -d&quot; &quot; -f 3-</code> to keep the 3rd field to the end of the line, where fields are delimited by a space. As for <code>sanitize_path</code>, beets translates some characters to underscores when creating directories, so we’ll use a <code>sed</code> pipeline to follow suit.</p>
+<div class="highlight"><pre><code class="bash">sanitize_path<span class="o">()</span> <span class="o">{</span>
+    sed <span class="s1">&#39;s/\.$/_/g&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> sed <span class="s1">&#39;s@/@_@g&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> sed <span class="s1">&#39;s/:/_/g&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> sed <span class="s1">&#39;s/Various Artists/Compilations/g&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> sed <span class="s1">&#39;s/\?/_/g&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> sed <span class="s1">&#39;s/\*/_/g&#39;</span>
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>Finally, we have the path</p>
+<div class="highlight"><pre><code class="bash"><span class="nv">ALBUM</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&quot;$_album&quot;</span> <span class="p">|</span> sanitize_path<span class="k">)</span>
+<span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;$HOME/music/$ALBUMARTIST/$ALBUM/cover.jpg&quot;</span>
+</code></pre></div>
+
+
+<p>We can use <a href="https://github.com/derf/feh">feh</a> or similar to set the background</p>
+<div class="highlight"><pre><code class="bash">feh --bg-center --save <span class="s2">&quot;$PATH&quot;</span>
+</code></pre></div>
+
+
+<p>Full script available as a <a href="https://gist.github.com/9996000">gist</a></p>
+<p>To install, run <code>:set status_display_program=/path/to/cmus-notify.sh</code> inside cmus.</p>
+
+</div>
+
+<div class="footer">
+
+<h2>Categories</h2>
+<ul>
+    
+    
+
+
+
+    <li><a href="/categories.html#bash-ref">
+        bash
+    </a></li>
+
+
+
+
+</ul>
+
+
+
+<h2>Tags</h2>
+<ul>
+    
+    
+
+
+ 
+    <li><a href="/tags.html#bash-ref">bash</a></li>
+ 
+    <li><a href="/tags.html#cmus-ref">cmus</a></li>
+ 
+    <li><a href="/tags.html#beets-ref">beets</a></li>
+ 
+    <li><a href="/tags.html#music-ref">music</a></li>
+
+
+
+
+</ul>
+
+</div>
+
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+          <div class="footer">
+            <div class="contact">
+              <p>
+                Andrew Noyes<br />
+                Software Engineer<br />
+                anoyes34@gmail.com
+              </p>
+            </div>
+            <div class="contact">
+              <p>
+              <a href="https://github.com/atn34">github.com/atn34</a><br />
+                <a href="https://twitter.com/atn34">twitter.com/atn34</a><br />
+              </p>
+            </div>
+          </div>
+        </div>
+
+    </body>
+</html>
