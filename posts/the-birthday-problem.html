@@ -109,8 +109,8 @@
 <p>Suppose there are <span class="math">\(n\)</span> people in a room, in a world with <span class="math">\(k\)</span> days in a year. What's the probability that two people share a birthday? Assume that birthdays are uniformly distributed throughout the year.</p>
 <p>For <span class="math">\(n \leq 1\)</span>, <span class="math">\(P(0) = P(1) = 0\)</span>, as there aren't even two people. For <span class="math">\(n &gt; 1\)</span>, let's consider two events.</p>
 <ul>
-<li>Event 1: There is a birthday shared among the first <span class="math">\(n - 1\)</span> people. (Probability is <span class="math">\(P(n)\)</span>).</li>
-<li>Event 2: There is not a birthday shared among the first <span class="math">\(n - 1\)</span> people. (Probability is <span class="math">\(1 - P(n)\)</span>).</li>
+<li>Event 1: There is a birthday shared among the first <span class="math">\(n - 1\)</span> people. (Probability is <span class="math">\(P(n - 1)\)</span>).</li>
+<li>Event 2: There is not a birthday shared among the first <span class="math">\(n - 1\)</span> people. (Probability is <span class="math">\(1 - P(n - 1)\)</span>).</li>
 </ul>
 <p>Since these events are mutually exclusive, we can add the probability of a shared birthday in each event to get <span class="math">\(P(n)\)</span>. In event 1, the probability of a shared birthday is <span class="math">\(1\)</span>. In event 2, each of the first <span class="math">\(n - 1\)</span> people has a distinct birthday. So the probability of a shared birthday is the probability that the <span class="math">\(n\)</span>th person shares a birthday with one of the first <span class="math">\(n - 1\)</span> people: <span class="math">\(\frac{(n - 1)}{k}\)</span>.</p>
 <p>Therefore <span class="math">\(P(n) = P(n - 1) + (1 - P(n - 1))\frac{(n - 1)}{k}\)</span>.</p>
