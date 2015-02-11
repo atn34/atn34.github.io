@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Categories</title>
+    <title>The Birthday Problem</title>
 
     <link rel="shortcut icon" href="/img/owl.ico" type="image/x-icon" />
 
@@ -80,7 +80,6 @@
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <div class="site-heading">
                         
-<h1>Categories</h1>
 
                     </div>
                 </div>
@@ -93,90 +92,66 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
+<h1>The Birthday Problem</h1>
 
-                <div class="tags-categories">
 
-<h2 id="bash">bash</h2>
-<ul class="posts">
-
-<li><span>2014-04-05</span> &raquo; <a href="posts/cmus-album-art.html">Cmus Album Art</a></li>
-
-<li><span>2014-04-04</span> &raquo; <a href="posts/twitter-fortune.html">Twitter Fortune</a></li>
-
+<div class="meta-title">Categories</div>
+<ul>
+    
+    <li><a class="extra" href="/categories.html#probability">probability</a></li>
+    
 </ul>
 
-<h2 id="beets">beets</h2>
-<ul class="posts">
 
-<li><span>2014-04-05</span> &raquo; <a href="posts/cmus-album-art.html">Cmus Album Art</a></li>
 
-</ul>
 
-<h2 id="cmus">cmus</h2>
-<ul class="posts">
-
-<li><span>2014-04-05</span> &raquo; <a href="posts/cmus-album-art.html">Cmus Album Art</a></li>
-
-</ul>
-
-<h2 id="ctags">ctags</h2>
-<ul class="posts">
-
-<li><span>2014-04-09</span> &raquo; <a href="posts/git-hooks-and-haskell-tags.html">Git Hooks and Haskell Tags</a></li>
-
-</ul>
-
-<h2 id="git">git</h2>
-<ul class="posts">
-
-<li><span>2014-04-09</span> &raquo; <a href="posts/git-hooks-and-haskell-tags.html">Git Hooks and Haskell Tags</a></li>
-
-</ul>
-
-<h2 id="haskell">haskell</h2>
-<ul class="posts">
-
-<li><span>2014-04-09</span> &raquo; <a href="posts/git-hooks-and-haskell-tags.html">Git Hooks and Haskell Tags</a></li>
-
-</ul>
-
-<h2 id="lilb">lilb</h2>
-<ul class="posts">
-
-<li><span>2014-04-04</span> &raquo; <a href="posts/twitter-fortune.html">Twitter Fortune</a></li>
-
-</ul>
-
-<h2 id="music">music</h2>
-<ul class="posts">
-
-<li><span>2014-04-05</span> &raquo; <a href="posts/cmus-album-art.html">Cmus Album Art</a></li>
-
-</ul>
-
-<h2 id="probability">probability</h2>
-<ul class="posts">
-
-<li><span>2015-02-07</span> &raquo; <a href="posts/the-birthday-problem.html">The Birthday Problem</a></li>
-
-</ul>
-
-<h2 id="twitter">twitter</h2>
-<ul class="posts">
-
-<li><span>2014-04-04</span> &raquo; <a href="posts/twitter-fortune.html">Twitter Fortune</a></li>
-
-</ul>
-
-<h2 id="vim">vim</h2>
-<ul class="posts">
-
-<li><span>2014-04-09</span> &raquo; <a href="posts/git-hooks-and-haskell-tags.html">Git Hooks and Haskell Tags</a></li>
-
-</ul>
-
-</div>
                 
+<p>Suppose there are <span class="math">\(n\)</span> people in a room, in a world with <span class="math">\(k\)</span> days in a year. What's the probability that two people share a birthday? Assume that birthdays are uniformly distributed throughout the year.</p>
+<p>For <span class="math">\(n \leq 1\)</span>, <span class="math">\(P(0) = P(1) = 0\)</span>, as there aren't even two people. For <span class="math">\(n &gt; 1\)</span>, let's consider two events.</p>
+<ul>
+<li>Event 1: There is a birthday shared among the first <span class="math">\(n - 1\)</span> people. (Probability is <span class="math">\(P(n)\)</span>).</li>
+<li>Event 2: There is not a birthday shared among the first <span class="math">\(n - 1\)</span> people. (Probability is <span class="math">\(1 - P(n)\)</span>).</li>
+</ul>
+<p>Since these events are mutually exclusive, we can add the probability of a shared birthday in each event to get <span class="math">\(P(n)\)</span>. In event 1, the probability of a shared birthday is <span class="math">\(1\)</span>. In event 2, each of the first <span class="math">\(n - 1\)</span> people has a distinct birthday. So the probability of a shared birthday is the probability that the <span class="math">\(n\)</span>th person shares a birthday with one of the first <span class="math">\(n - 1\)</span> people: <span class="math">\(\frac{(n - 1)}{k}\)</span>.</p>
+<p>Therefore <span class="math">\(P(n) = P(n - 1) + (1 - P(n - 1))\frac{(n - 1)}{k}\)</span>.</p>
+<p>Now we can compute <span class="math">\(P(n)\)</span>. Example implementation in python.</p>
+<pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> birthday(n, k=<span class="dv">365</span>):
+    <span class="co">&quot;&quot;&quot;</span>
+<span class="co">    The probability that n people share a birthday if there are k days in the year.</span>
+<span class="co">    &quot;&quot;&quot;</span>
+    <span class="kw">if</span> n == <span class="dv">0</span>:
+        <span class="kw">return</span> <span class="dv">0</span>
+    p = birthday(n - <span class="dv">1</span>, k)
+    <span class="kw">return</span> p + (<span class="dv">1</span> - p) * ((n - <span class="dv">1</span>) / <span class="dt">float</span>(k))</code></pre>
+<p>Some examples.</p>
+<pre class="sourceCode python"><code class="sourceCode python">&gt;&gt;&gt; birthday(<span class="dv">1</span>)
+<span class="fl">0.0</span>
+&gt;&gt;&gt; birthday(<span class="dv">2</span>)
+<span class="fl">0.0027397260273972603</span>
+&gt;&gt;&gt; birthday(<span class="dv">3</span>)
+<span class="fl">0.008204165884781385</span>
+&gt;&gt;&gt; birthday(<span class="dv">23</span>)
+<span class="fl">0.5072972343239854</span></code></pre>
+<p>Once there are at least 23 people, the probability of a shared birthday is over 50 percent!</p>
+<div class="figure">
+<img src="/posts/Dcy5iGupi4CAcoiYe9nan9Ngfto=.svg" alt="Probability of a shared birthday if n people are in a room." /><p class="caption">Probability of a shared birthday if <span class="math">\(n\)</span> people are in a room.</p>
+</div>
+
+                
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'wwwatn34com'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
 
             </div>
         </div>
@@ -231,6 +206,10 @@
     <script src="/js/clean-blog.min.js"></script>
 
 
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script type="text/javascript" charset="utf-8">
+$('img').addClass('img-responsive center-block');
+</script>
 
 
 </body>

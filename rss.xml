@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+<channel>
+    <title>Ignorance is Bliss</title>
+    <link>http://www.atn34.com/</link>
+
+    <description>Ramblings about Computer Science</description>
+
+    <language>en</language>
+
+        <item>
+            <title>The Birthday Problem</title>
+            <link>http://www.atn34.com/posts/the-birthday-problem.html</link>
+
+        </item>
+
+        <item>
+            <title>Git Hooks and Haskell Tags</title>
+            <link>http://www.atn34.com/posts/git-hooks-and-haskell-tags.html</link>
+
+        </item>
+
+        <item>
+            <title>Cmus Album Art</title>
+            <link>http://www.atn34.com/posts/cmus-album-art.html</link>
+
+        </item>
+
+        <item>
+            <title>Twitter Fortune</title>
+            <link>http://www.atn34.com/posts/twitter-fortune.html</link>
+
+        </item>
+
+</channel>
+
+</rss>
