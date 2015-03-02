@@ -49,6 +49,8 @@ www.atn34.com/css/bootstrap.min.css
 
 www.atn34.com/css/clean-blog.min.css
 
+www.atn34.com/posts/Existence-of-Uncomputable-Functions.html
+
 www.atn34.com/posts/the-birthday-problem.html
 
 www.atn34.com/posts/twitter-fortune.html
