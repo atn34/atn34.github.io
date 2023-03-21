@@ -139,20 +139,27 @@ You are only young once, but you can stay immature indefinitely.</code></pre>
 to have a script that can generate fortune files from a twitter user’s
 tweets.</p>
 <h1 id="twitter">Twitter</h1>
-<p>I found a nice tool made by Kai Hendry called <a
-href="http://greptweet.com/">greptweet</a> that can request up to 3000
-tweets, with a nice webapi.</p>
+<p>I found a nice tool made by Kai Hendry called <del>greptweet</del><a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a> that can request up to 3000 tweets,
+with a nice webapi.</p>
 <p>To use it, first fetch the tweets</p>
+<del>
 <pre class="terminal"><code>$ curl -s http://greptweet.com/f/$TWITTER_HANDLE &gt; /dev/null</code></pre>
+</del>
 <p>When that’s done, you can download the tweets like so</p>
+<del>
 <pre class="terminal"><code>$ curl -s http://greptweet.com/u/lilbthebasedgod/tweets.txt | head -1
 451980332581928960|Fri Apr 04 07:11:23 +0000 2014|Smile for me, I love you - Lil B</code></pre>
+</del>
 <p>To use the tweets with fortune, we need to format the tweets the way
 <code>fortune</code> wants:</p>
+<del>
 <pre class="terminal"><code>$ curl -s http://greptweet.com/u/$TWITTER_HANDLE/tweets.txt \
     | cut -f3 -d&#39;|&#39; \
     | grep -v &#39;\&lt;RT\&gt;\|\&lt;http\|@&#39; \
     | awk &quot;1; { print \&quot;\t\t-- @$TWITTER_HANDLE\n%\&quot;; }&quot;</code></pre>
+</del>
 <p><code>cut -f3 -d'|'</code> to keep field 3 where fields are delimited
 by ‘|’, <code>grep -v '\&lt;RT\&gt;\|\&lt;http\|@'</code> to filter out
 the retweets, tweets with links, and tweets with <code>@</code>
@@ -193,6 +200,14 @@ custom vim start screen.</p>
 <img src="http://i.imgur.com/MKYrQeO.png?1?8351" alt="Final result" />
 <figcaption aria-hidden="true">Final result</figcaption>
 </figure>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Greptweet does not appear to be a thing anymore.<a
+href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
                 
 <div id="disqus_thread"></div>
