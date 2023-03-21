@@ -109,55 +109,90 @@
 
 
 
-                <div class="toc" id="TOC">
+                <style></style>
+
+<div class="toc" id="TOC">
 <div class="meta-title">Table of Contents</div>
 <ul>
-<li><a href="#motivation">Motivation</a></li>
-<li><a href="#fortune">Fortune</a></li>
-<li><a href="#twitter">Twitter</a></li>
-<li><a href="#vim">Vim</a></li>
-<li><a href="#final-result">Final Result</a></li>
+<li><a href="#motivation" id="toc-motivation">Motivation</a></li>
+<li><a href="#fortune" id="toc-fortune">Fortune</a></li>
+<li><a href="#twitter" id="toc-twitter">Twitter</a></li>
+<li><a href="#vim" id="toc-vim">Vim</a></li>
+<li><a href="#final-result" id="toc-final-result">Final Result</a></li>
 </ul>
 </div>
 
 <h1 id="motivation">Motivation</h1>
-<p>Recently, my friend <a href="https://twitter.com/BkcMath">Ben Carriel</a> decided he wanted a random <a href="https://twitter.com/LILBTHEBASEDGOD">lil b</a> tweet to appear in his emacs start buffer. I liked the idea. I set out to make it happen for my vim start screen.</p>
+<p>Recently, my friend <a href="https://twitter.com/BkcMath">Ben
+Carriel</a> decided he wanted a random <a
+href="https://twitter.com/LILBTHEBASEDGOD">lil b</a> tweet to appear in
+his emacs start buffer. I liked the idea. I set out to make it happen
+for my vim start screen.</p>
 <h1 id="fortune">Fortune</h1>
-<p>Linux comes with the <a href="http://linux.die.net/man/6/fortune"><code>fortune</code></a> utility, which serves a similar purpose: when run with no arguments it prints a &quot;random, hopefully interesting, adage&quot;. For example,</p>
+<p>Linux comes with the <a
+href="http://linux.die.net/man/6/fortune"><code>fortune</code></a>
+utility, which serves a similar purpose: when run with no arguments it
+prints a “random, hopefully interesting, adage”. For example,</p>
 <pre class="terminal"><code>$ fortune
 You are only young once, but you can stay immature indefinitely.</code></pre>
-<p>Fortune reads these adages from fortune files. I thought it'd be nice to have a script that can generate fortune files from a twitter user's tweets.</p>
+<p>Fortune reads these adages from fortune files. I thought it’d be nice
+to have a script that can generate fortune files from a twitter user’s
+tweets.</p>
 <h1 id="twitter">Twitter</h1>
-<p>I found a nice tool made by Kai Hendry called <a href="http://greptweet.com/">greptweet</a> that can request up to 3000 tweets, with a nice webapi.</p>
+<p>I found a nice tool made by Kai Hendry called <a
+href="http://greptweet.com/">greptweet</a> that can request up to 3000
+tweets, with a nice webapi.</p>
 <p>To use it, first fetch the tweets</p>
 <pre class="terminal"><code>$ curl -s http://greptweet.com/f/$TWITTER_HANDLE &gt; /dev/null</code></pre>
-<p>When that's done, you can download the tweets like so</p>
+<p>When that’s done, you can download the tweets like so</p>
 <pre class="terminal"><code>$ curl -s http://greptweet.com/u/lilbthebasedgod/tweets.txt | head -1
 451980332581928960|Fri Apr 04 07:11:23 +0000 2014|Smile for me, I love you - Lil B</code></pre>
-<p>To use the tweets with fortune, we need to format the tweets the way <code>fortune</code> wants:</p>
+<p>To use the tweets with fortune, we need to format the tweets the way
+<code>fortune</code> wants:</p>
 <pre class="terminal"><code>$ curl -s http://greptweet.com/u/$TWITTER_HANDLE/tweets.txt \
     | cut -f3 -d&#39;|&#39; \
     | grep -v &#39;\&lt;RT\&gt;\|\&lt;http\|@&#39; \
     | awk &quot;1; { print \&quot;\t\t-- @$TWITTER_HANDLE\n%\&quot;; }&quot;</code></pre>
-<p><code>cut -f3 -d'|'</code> to keep field 3 where fields are delimited by '|', <code>grep -v '\&lt;RT\&gt;\|\&lt;http\|@'</code> to filter out the retweets, tweets with links, and tweets with <code>@</code> mentions, and <code>awk &quot;1; { print \&quot;\t\t-- @$TWITTER_HANDLE\n%\&quot;; }&quot;</code> to format the tweets. I got the awk one-liner <a href="http://www.theunixschool.com/2012/08/insert-new-line-after-every-n-lines.html">here</a>. Basically <code>1</code> (true) prints every line by default, then we print who the tweet is by, and <code>%</code> on its own line to delimit the strings for <code>fortune</code>.</p>
-<p>Full script available <a href="https://github.com/atn34/twitter-fortune">here</a>. There were some stray html entities in the tweets (eg <code>&amp;amp;</code> or <code>&amp;lt;</code> or <code>&amp;gt;</code>), so I threw some <code>sed</code> in the pipeline to clean those up.</p>
-<p>One more complication: before <code>fortune</code> can use the file, we need to use <a href="http://linux.die.net/man/1/strfile"><code>strfile</code></a> to allow for random access of strings in the file.</p>
+<p><code>cut -f3 -d'|'</code> to keep field 3 where fields are delimited
+by ‘|’, <code>grep -v '\&lt;RT\&gt;\|\&lt;http\|@'</code> to filter out
+the retweets, tweets with links, and tweets with <code>@</code>
+mentions, and
+<code>awk "1; { print \"\t\t-- @$TWITTER_HANDLE\n%\"; }"</code> to
+format the tweets. I got the awk one-liner <a
+href="http://www.theunixschool.com/2012/08/insert-new-line-after-every-n-lines.html">here</a>.
+Basically <code>1</code> (true) prints every line by default, then we
+print who the tweet is by, and <code>%</code> on its own line to delimit
+the strings for <code>fortune</code>.</p>
+<p>Full script available <a
+href="https://github.com/atn34/twitter-fortune">here</a>. There were
+some stray html entities in the tweets (eg <code>&amp;amp;</code> or
+<code>&amp;lt;</code> or <code>&amp;gt;</code>), so I threw some
+<code>sed</code> in the pipeline to clean those up.</p>
+<p>One more complication: before <code>fortune</code> can use the file,
+we need to use <a
+href="http://linux.die.net/man/1/strfile"><code>strfile</code></a> to
+allow for random access of strings in the file.</p>
 <pre class="terminal"><code>$ ./twitter-fortune.sh lilbthebasedgod &gt; fortune-file
 $ strfile fortune-file
 $ fortune fortune-file
 Love you and i love life !!!!! Thank you for waking up today - Lil B
                 -- @lilbthebasedgod</code></pre>
-<p>Then you'll probably want to add your new fortune file to the rest of them. Use <code>$ fortune -f</code> to see where the rest of your fortune files are.</p>
+<p>Then you’ll probably want to add your new fortune file to the rest of
+them. Use <code>$ fortune -f</code> to see where the rest of your
+fortune files are.</p>
 <h1 id="vim">Vim</h1>
-<p>I used Marco Hinz's <a href="https://github.com/mhinz/vim-startify">vim startify</a> for my custom vim start screen.</p>
-<p>Once installed, I added the following bit of configuration to use <code>fortune</code> as my custom header</p>
+<p>I used Marco Hinz’s <a
+href="https://github.com/mhinz/vim-startify">vim startify</a> for my
+custom vim start screen.</p>
+<p>Once installed, I added the following bit of configuration to use
+<code>fortune</code> as my custom header</p>
 <pre><code>let g:startify_custom_header =
     \ map(split(system(&#39;fortune&#39;), &#39;\n&#39;), &#39;&quot;   &quot;. v:val&#39;) + [&#39;&#39;,&#39;&#39;]</code></pre>
 <h1 id="final-result">Final Result</h1>
-<div class="figure">
+<figure>
 <img src="http://i.imgur.com/MKYrQeO.png?1?8351" alt="Final result" />
-<p class="caption">Final result</p>
-</div>
+<figcaption aria-hidden="true">Final result</figcaption>
+</figure>
 
                 
 <div id="disqus_thread"></div>
@@ -212,7 +247,7 @@ var disqus_shortname = 'wwwatn34com'; // required: replace example with your for
                             </a>
                         </li>
                     </ul>
-                    <p class="copyright text-muted">Copyright &copy; www.atn34.com 2015</p>
+                    <p class="copyright text-muted">Copyright &copy; www.atn34.com 2023</p>
                 </div>
             </div>
         </div>
